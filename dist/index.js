@@ -474,7 +474,7 @@ async function updateReadme(data) {
     
     const { karma, completed_count, days_items, goals, week_items } = data;
   
-    const karmaPoint = [`🏆  ${Humanize.intComma(karma)} Karma Points`];
+    const karmaPoint = [`<img src="https://media.giphy.com/media/pLdVWrcyYuDbA1gzRC/giphy.gif" width="20px"> Possuo **${Humanize.intComma(karma)}** pontos de Karma;`];
     todoist.push(karmaPoint);
   
     const dailyGoal = [
@@ -483,15 +483,15 @@ async function updateReadme(data) {
     todoist.push(dailyGoal);
 
     if(PREMIUM) {
-      const weekItems = [`🗓  Completed ${week_items[0].total_completed.toString()} tasks this week`];
+      const weekItems = [`<img src="https://media.giphy.com/media/toPQKsvkZn12WROprz/giphy.gif" width="20px"> Completei **${week_items[0].total_completed.toString()}** tarefas hoje;`];
       todoist.push(weekItems);
     }
   
-    const totalTasks = [`✅  Completed ${Humanize.intComma(completed_count)} tasks so far`];
+    const totalTasks = [`<img src="https://media.giphy.com/media/fLfIiS0UhOh2ruaX0m/giphy.gif" width="20px"> Completei **${Humanize.intComma(completed_count)}** tarefas no total;`];
     todoist.push(totalTasks);
 
     const longestStreak = [
-      `⏳  Longest streak is ${goals.max_daily_streak.count} days`,
+      `<img src="https://media.giphy.com/media/2iktjYc84MxU9Izzfb/giphy.gif" width="20px"> Sequência mais longa é de **${goals.max_daily_streak.count}** dias;`,
     ];
     todoist.push(longestStreak);
   
