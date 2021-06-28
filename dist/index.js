@@ -478,12 +478,12 @@ async function updateReadme(data) {
     todoist.push(karmaPoint);
   
     const dailyGoal = [
-      `🌸  Completed ${days_items[0].total_completed.toString()} tasks today`,
+      `<img src="https://media.giphy.com/media/toPQKsvkZn12WROprz/giphy.gif" width="20px"> Completei **${days_items[0].total_completed.toString()}** tarefas hoje;`,
     ];
     todoist.push(dailyGoal);
 
     if(PREMIUM) {
-      const weekItems = [`<img src="https://media.giphy.com/media/toPQKsvkZn12WROprz/giphy.gif" width="20px"> Completei **${week_items[0].total_completed.toString()}** tarefas hoje;`];
+      const weekItems = [`<img src="https://media.giphy.com/media/iVytKHg54kvEbSOyJe/giphy.gif" width="20px"> Completei **${week_items[0].total_completed.toString()}** tarefas essa semana;`];
       todoist.push(weekItems);
     }
   
