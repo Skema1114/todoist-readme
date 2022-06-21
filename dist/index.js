@@ -474,24 +474,24 @@ async function updateReadme(data) {
     
     const { karma, completed_count, days_items, goals, week_items } = data;
   
-    const karmaPoint = [`<img src="https://media.giphy.com/media/pLdVWrcyYuDbA1gzRC/giphy.gif" width="20px"> Possuo **${Humanize.intComma(karma)}** pontos de Karma;`];
+    const karmaPoint = [`<img src="https://media.giphy.com/media/pLdVWrcyYuDbA1gzRC/giphy.gif" width="20"> Possuo **${Humanize.intComma(karma)}** pontos de Karma;`];
     todoist.push(karmaPoint);
   
     const dailyGoal = [
-      `<img src="https://media.giphy.com/media/toPQKsvkZn12WROprz/giphy.gif" width="20px"> Completei **${days_items[0].total_completed.toString()}** tarefas hoje;`,
+      `<img src="https://media.giphy.com/media/toPQKsvkZn12WROprz/giphy.gif" width="20"> Completei **${days_items[0].total_completed.toString()}** tarefas hoje;`,
     ];
     todoist.push(dailyGoal);
 
     if(PREMIUM) {
-      const weekItems = [`<img src="https://media.giphy.com/media/iVytKHg54kvEbSOyJe/giphy.gif" width="20px"> Completei **${week_items[0].total_completed.toString()}** tarefas essa semana;`];
+      const weekItems = [`<img src="https://media.giphy.com/media/iVytKHg54kvEbSOyJe/giphy.gif" width="20"> Completei **${week_items[0].total_completed.toString()}** tarefas essa semana;`];
       todoist.push(weekItems);
     }
   
-    const totalTasks = [`<img src="https://media.giphy.com/media/fLfIiS0UhOh2ruaX0m/giphy.gif" width="20px"> Completei **${Humanize.intComma(completed_count)}** tarefas no total;`];
+    const totalTasks = [`<img src="https://media.giphy.com/media/fLfIiS0UhOh2ruaX0m/giphy.gif" width="20"> Completei **${Humanize.intComma(completed_count)}** tarefas no total;`];
     todoist.push(totalTasks);
 
     const longestStreak = [
-      `<img src="https://media.giphy.com/media/2iktjYc84MxU9Izzfb/giphy.gif" width="20px"> Sequência mais longa é de **${goals.max_daily_streak.count}** dias;`,
+      `<img src="https://media.giphy.com/media/2iktjYc84MxU9Izzfb/giphy.gif" width="20"> Sequência mais longa é de **${goals.max_daily_streak.count}** dias;`,
     ];
     todoist.push(longestStreak);
   
