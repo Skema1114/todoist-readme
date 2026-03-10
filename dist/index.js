@@ -30162,69 +30162,24 @@ const README_FILE_PATH = "./README.md";
 
 async function main() {
   try {
-    let tasks = [];
-    let cursor = null;
+    const headers = { Authorization: `Bearer ${TODOIST_API_KEY}` };
 
-    do {
-      const params = { limit: 200 };
-      if (cursor) params.cursor = cursor;
+    const statsResponse = await axios.get("https://api.todoist.com/api/v1/user/stats", { headers });
+    const data = statsResponse.data;
 
-      const response = await axios.get("https://api.todoist.com/api/v1/tasks", {
-        headers: {
-          Authorization: `Bearer ${TODOIST_API_KEY}`,
-        },
-        params,
-      });
+    console.log("Stats response:", JSON.stringify(data, null, 2));
 
-      tasks = tasks.concat(response.data.results || []);
-      cursor = response.data.next_cursor || null;
-    } while (cursor);
+    const karma = data.karma || 0;
+    const todayCount = data.days_items?.[0]?.total_completed || 0;
+    const weekCount = data.week_items?.[0]?.total_completed || 0;
+    const total = data.completed_count || 0;
+    const streak = data.goals?.current_daily_streak?.count || 0;
 
-    const stats = calculateStats(tasks);
-
-    await updateReadme(stats);
+    await updateReadme({ karma, todayCount, weekCount, total, streak });
   } catch (error) {
     console.error(error.response?.data || error.message);
     core.setFailed(error.message);
   }
-}
-
-function calculateStats(tasks) {
-  const today = new Date().toISOString().slice(0, 10);
-
-  const weekAgo = new Date();
-  weekAgo.setDate(weekAgo.getDate() - 7);
-
-  let todayCount = 0;
-  let weekCount = 0;
-
-  tasks.forEach((task) => {
-    if (!task.created_at) return;
-
-    const date = task.created_at.slice(0, 10);
-
-    if (date === today) {
-      todayCount++;
-    }
-
-    if (new Date(date) >= weekAgo) {
-      weekCount++;
-    }
-  });
-
-  const total = tasks.length;
-
-  const karma = total * 10;
-
-  const streak = Math.min(total, 7);
-
-  return {
-    karma,
-    todayCount,
-    weekCount,
-    total,
-    streak,
-  };
 }
 
 async function updateReadme(stats) {
