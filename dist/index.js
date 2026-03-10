@@ -30157,27 +30157,28 @@ const fs = __nccwpck_require__(9896);
 const exec = __nccwpck_require__(680);
 
 const TODOIST_API_KEY = core.getInput("TODOIST_API_KEY");
-const PREMIUM = core.getInput("PREMIUM");
 
 const README_FILE_PATH = "./README.md";
 
 async function main() {
   try {
+    const today = new Date();
     const since = new Date();
-    since.setDate(since.getDate() - 365);
 
-    const res = await axios("https://api.todoist.com/api/v1/tasks/completed/by_completion_date", {
+    since.setDate(today.getDate() - 365);
+
+    const response = await axios.get("https://api.todoist.com/api/v1/tasks/completed/by_completion_date", {
       headers: {
         Authorization: `Bearer ${TODOIST_API_KEY}`,
       },
       params: {
-        since: since.toISOString().split("T")[0],
-        until: new Date().toISOString().split("T")[0],
+        since: since.toISOString(),
+        until: today.toISOString(),
         limit: 200,
       },
     });
 
-    const tasks = res.data.items || [];
+    const tasks = response.data.items || [];
 
     const stats = calculateStats(tasks);
 
@@ -30261,7 +30262,11 @@ async function updateReadme(stats) {
   const start = "<!-- TODO-IST:START -->";
   const end = "<!-- TODO-IST:END -->";
 
-  const newReadme = readme.replace(new RegExp(`${start}[\\s\\S]*${end}`), `${start}\n${content}\n${end}`);
+  const newReadme = readme.replace(
+    new RegExp(`${start}[\\s\\S]*${end}`),
+
+    `${start}\n${content}\n${end}`,
+  );
 
   fs.writeFileSync(README_FILE_PATH, newReadme);
 
