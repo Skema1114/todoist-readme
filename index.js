@@ -11,8 +11,11 @@ async function main() {
   try {
     const headers = { Authorization: `Bearer ${TODOIST_API_KEY}` };
 
-    const statsResponse = await axios.get("https://api.todoist.com/api/v1/user/stats", { headers });
-    const data = statsResponse.data;
+    const statsResponse = await axios.post("https://api.todoist.com/api/v1/sync", {
+      sync_token: "*",
+      resource_types: '["stats"]',
+    }, { headers });
+    const data = statsResponse.data.stats || statsResponse.data;
 
     console.log("Stats response:", JSON.stringify(data, null, 2));
 
