@@ -30168,7 +30168,7 @@ async function main() {
       },
     });
 
-    const tasks = response.data || [];
+    const tasks = response.data.results || [];
 
     const stats = calculateStats(tasks);
 
