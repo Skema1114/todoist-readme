@@ -30162,7 +30162,7 @@ const README_FILE_PATH = "./README.md";
 
 async function main() {
   try {
-    const response = await axios.get("https://api.todoist.com/rest/v2/tasks", {
+    const response = await axios.get("https://api.todoist.com/api/v1/tasks", {
       headers: {
         Authorization: `Bearer ${TODOIST_API_KEY}`,
       },
