@@ -4,13 +4,14 @@
   "description": "🚧 Updates README with your Todoist stats",
   "main": "index.js",
   "dependencies": {
-    "@actions/core": "^1.2.5",
+    "@actions/core": "^1.11.1",
     "axios": "^0.20.0",
     "child_process": "^1.0.2",
     "humanize-plus": "^1.8.2",
     "process": "^0.11.10"
   },
   "devDependencies": {
+    "@vercel/ncc": "^0.38.4",
     "@zeit/ncc": "^0.22.3"
   },
   "scripts": {
@@ -26,5 +27,7 @@
   "bugs": {
     "url": "https://github.com/abhisheknaiidu/todoist-readme/issues"
   },
-  "homepage": "https://github.com/abhisheknaiidu/todoist-readme#readme"
+  "homepage": "https://github.com/abhisheknaiidu/todoist-readme#readme",
+  "keywords": [],
+  "type": "commonjs"
 }
