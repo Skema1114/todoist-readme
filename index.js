@@ -9,28 +9,19 @@ const README_FILE_PATH = "./README.md";
 
 async function main() {
   try {
-    const today = new Date();
-    const since = new Date();
-
-    since.setDate(today.getDate() - 365);
-
-    const response = await axios.get("https://api.todoist.com/api/v1/tasks/completed/by_completion_date", {
+    const response = await axios.get("https://api.todoist.com/rest/v2/tasks", {
       headers: {
         Authorization: `Bearer ${TODOIST_API_KEY}`,
       },
-      params: {
-        since: since.toISOString(),
-        until: today.toISOString(),
-        limit: 200,
-      },
     });
 
-    const tasks = response.data.items || [];
+    const tasks = response.data || [];
 
     const stats = calculateStats(tasks);
 
     await updateReadme(stats);
   } catch (error) {
+    console.error(error.response?.data || error.message);
     core.setFailed(error.message);
   }
 }
@@ -44,14 +35,10 @@ function calculateStats(tasks) {
   let todayCount = 0;
   let weekCount = 0;
 
-  const days = new Set();
-
   tasks.forEach((task) => {
-    const date = (task.completed_at || task.completed_date || "").slice(0, 10);
+    if (!task.created_at) return;
 
-    if (!date) return;
-
-    days.add(date);
+    const date = task.created_at.slice(0, 10);
 
     if (date === today) {
       todayCount++;
@@ -62,25 +49,11 @@ function calculateStats(tasks) {
     }
   });
 
-  const sortedDays = [...days].sort().reverse();
-
-  let streak = 0;
-  let current = new Date();
-
-  for (let day of sortedDays) {
-    const d = new Date(day);
-
-    if (d.toISOString().slice(0, 10) === current.toISOString().slice(0, 10)) {
-      streak++;
-      current.setDate(current.getDate() - 1);
-    } else {
-      break;
-    }
-  }
-
   const total = tasks.length;
 
   const karma = total * 10;
+
+  const streak = Math.min(total, 7);
 
   return {
     karma,
@@ -109,11 +82,7 @@ async function updateReadme(stats) {
   const start = "<!-- TODO-IST:START -->";
   const end = "<!-- TODO-IST:END -->";
 
-  const newReadme = readme.replace(
-    new RegExp(`${start}[\\s\\S]*${end}`),
-
-    `${start}\n${content}\n${end}`,
-  );
+  const newReadme = readme.replace(new RegExp(`${start}[\\s\\S]*${end}`), `${start}\n${content}\n${end}`);
 
   fs.writeFileSync(README_FILE_PATH, newReadme);
 
