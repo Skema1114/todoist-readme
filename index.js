@@ -11,21 +11,30 @@ async function main() {
   try {
     const headers = { Authorization: `Bearer ${TODOIST_API_KEY}` };
 
-    const statsResponse = await axios.post("https://api.todoist.com/api/v1/sync", {
-      sync_token: "*",
-      resource_types: '["stats"]',
-    }, { headers });
+    const [statsResponse, tasksResponse] = await Promise.all([
+      axios.post("https://api.todoist.com/api/v1/sync", {
+        sync_token: "*",
+        resource_types: '["stats"]',
+      }, { headers }),
+      axios.get("https://api.todoist.com/api/v1/tasks", { headers, params: { limit: 1 } }),
+    ]);
+
     const data = statsResponse.data.stats || statsResponse.data;
-
-    console.log("Stats response:", JSON.stringify(data, null, 2));
-
-    const karma = data.karma || 0;
     const todayCount = data.days_items?.[0]?.total_completed || 0;
     const weekCount = data.week_items?.[0]?.total_completed || 0;
     const total = data.completed_count || 0;
-    const streak = data.goals?.current_daily_streak?.count || 0;
 
-    await updateReadme({ karma, todayCount, weekCount, total, streak });
+    let pendingCount = 0;
+    let cursor = null;
+    do {
+      const params = { limit: 200 };
+      if (cursor) params.cursor = cursor;
+      const res = await axios.get("https://api.todoist.com/api/v1/tasks", { headers, params });
+      pendingCount += (res.data.results || []).length;
+      cursor = res.data.next_cursor || null;
+    } while (cursor);
+
+    await updateReadme({ todayCount, weekCount, total, pendingCount });
   } catch (error) {
     console.error(error.response?.data || error.message);
     core.setFailed(error.message);
@@ -33,15 +42,14 @@ async function main() {
 }
 
 async function updateReadme(stats) {
-  const { karma, todayCount, weekCount, total, streak } = stats;
+  const { todayCount, weekCount, total, pendingCount } = stats;
 
   const content = `
 
-<img src="https://media.giphy.com/media/pLdVWrcyYuDbA1gzRC/giphy.gif" width="20"> Possuo **${karma}** pontos de Karma;           
-<img src="https://media.giphy.com/media/toPQKsvkZn12WROprz/giphy.gif" width="20"> Completei **${todayCount}** tarefas hoje;           
-<img src="https://media.giphy.com/media/iVytKHg54kvEbSOyJe/giphy.gif" width="20"> Completei **${weekCount}** tarefas essa semana;           
-<img src="https://media.giphy.com/media/fLfIiS0UhOh2ruaX0m/giphy.gif" width="20"> Completei **${total}** tarefas no total;           
-<img src="https://media.giphy.com/media/2iktjYc84MxU9Izzfb/giphy.gif" width="20"> Sequência mais longa é de **${streak}** dias;
+<img src="https://media.giphy.com/media/toPQKsvkZn12WROprz/giphy.gif" width="20"> Completei **${todayCount}** tarefas hoje;
+<img src="https://media.giphy.com/media/iVytKHg54kvEbSOyJe/giphy.gif" width="20"> Completei **${weekCount}** tarefas essa semana;
+<img src="https://media.giphy.com/media/fLfIiS0UhOh2ruaX0m/giphy.gif" width="20"> Completei **${total}** tarefas no total;
+<img src="https://media.giphy.com/media/pLdVWrcyYuDbA1gzRC/giphy.gif" width="20"> Tenho **${pendingCount}** tarefas pendentes;
 
 `;
 
