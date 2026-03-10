@@ -454,7 +454,11 @@ module.exports = /******/ (function (modules, runtime) {
         try {
           const res = await axios("https://api.todoist.com/api/v1/tasks/completed/by_completion_date", {
             headers: { Authorization: `Bearer ${TODOIST_API_KEY}` },
-            params: { limit: 200 },
+            params: {
+              since: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString(),
+              until: new Date().toISOString(),
+              limit: 200,
+            },
           });
 
           const tasks = res.data.items || [];
