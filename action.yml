@@ -1,25 +1,25 @@
-name: 'Todoist Readme'
+name: "Todoist Readme"
 author: Abhishek Naidu
-description: '🚧 Updates README with your Todoist stats'
+description: "🚧 Updates README with your Todoist stats"
 
 inputs:
   TODOIST_API_KEY:
-    description: 'Your Todoist API Key'
+    description: "Your Todoist API Key"
     required: true
 
   USERNAME:
-    description: 'Your GitHub username'
+    description: "Your GitHub username"
     default: ${{ github.repository_owner }}
     required: false
-  
+
   PREMIUM:
-    description: 'Premium User or Not'
+    description: "Premium User or Not"
     default: false
     required: false
 
 runs:
   using: "node12"
-  main: "dist/index.js"
+  main: "index.js"
 
 branding:
   icon: "activity"
